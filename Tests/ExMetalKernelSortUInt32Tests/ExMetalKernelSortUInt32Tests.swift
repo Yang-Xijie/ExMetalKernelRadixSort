@@ -29,14 +29,19 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
     }
 
     func test_1k() throws {
-        print(Self.random_array_1k[0 ..< 8].map { ($0.key, $0.value) })
-        print(Self.random_array_1k[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
+        print("count = \(Self.count_1k)")
+        print(Self.random_array_1k[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.random_array_1k[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
+        print(Self.sorted_array_1k[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.sorted_array_1k[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
 
         // get duration of Sort_Swift
         _ = Test_Sort_Swift(random_array: Self.random_array_1k)
     }
 
     func test_1m() throws {
+        print("count = \(Self.count_1m)")
+        print(Self.random_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.random_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
+        print(Self.sorted_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.sorted_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
+
         // get duration of Sort_Swift
         _ = Test_Sort_Swift(random_array: Self.random_array_1m)
     }
