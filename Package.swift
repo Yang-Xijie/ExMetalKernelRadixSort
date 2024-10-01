@@ -10,12 +10,23 @@ let package = Package(
     products: [
         .library(
             name: "ExMetalKernelSortUInt32",
-            targets: ["ExMetalKernelSortUInt32"]),
+            targets: [
+                "ExMetalKernelSortUInt32",
+            ]
+        ),
     ],
     targets: [
         .target(
-            name: "ExMetalKernelSortUInt32"),
+            name: "ExMetalKernelSortUInt32",
+            resources: [
+                .process("radix-sort.metal"),
+            ]
+        ),
         .testTarget(
             name: "ExMetalKernelSortUInt32Tests",
-            dependencies: ["ExMetalKernelSortUInt32"]),
-    ])
+            dependencies: [
+                "ExMetalKernelSortUInt32",
+            ]
+        ),
+    ]
+)
