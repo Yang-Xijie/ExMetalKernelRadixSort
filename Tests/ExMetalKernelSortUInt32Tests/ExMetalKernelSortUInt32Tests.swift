@@ -18,14 +18,22 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
     static let random_array_1m = CreateTestArray(N: count_1m)
     static let sorted_array_1m = random_array_1m.sorted { $0.value < $1.value }
 
-    func Test_Sort_Swift(random_array: [Element]) -> [Element] {
+    func Test_Sort_Swift(random_array: [Element]) {
         var array = random_array
 
         let time = Date.now
         Sort_Swift(array: &array)
         print("Sort_Swift() \(String(format: "%.3f", Date.now.timeIntervalSince(time) * 1000))ms")
+    }
 
-        return array
+    func Test_Sort_RadixSortCPU(random_array: [Element]) {
+        var array = random_array
+
+        let time = Date.now
+        Sort_RadixSortCPU(array: &array)
+        print("Sort_RadixSortCPU() \(String(format: "%.3f", Date.now.timeIntervalSince(time) * 1000))ms")
+
+        print(array[0 ..< 8].map { ($0.key, $0.value) }, "...", array[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
     }
 
     func test_1k() throws {
@@ -33,8 +41,14 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         print(Self.random_array_1k[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.random_array_1k[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
         print(Self.sorted_array_1k[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.sorted_array_1k[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
 
+        // MARK: Sort_Swift
+
         // get duration of Sort_Swift
-        _ = Test_Sort_Swift(random_array: Self.random_array_1k)
+        Test_Sort_Swift(random_array: Self.random_array_1k)
+
+        // MARK: Sort_RadixSortCPU
+
+        Test_Sort_RadixSortCPU(random_array: Self.random_array_1k)
     }
 
     func test_1m() throws {
@@ -42,7 +56,13 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         print(Self.random_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.random_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
         print(Self.sorted_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.sorted_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
 
+        // MARK: Sort_Swift
+        
         // get duration of Sort_Swift
-        _ = Test_Sort_Swift(random_array: Self.random_array_1m)
+        Test_Sort_Swift(random_array: Self.random_array_1m)
+        
+        // MARK: Sort_RadixSortCPU
+
+        Test_Sort_RadixSortCPU(random_array: Self.random_array_1m)
     }
 }
