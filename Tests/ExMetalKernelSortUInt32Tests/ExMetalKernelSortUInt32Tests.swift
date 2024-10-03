@@ -6,6 +6,7 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         var array = Array<Element>.init(repeating: .init(key: 0, value: 0), count: N)
         for i in 0 ..< N {
             array[i].key = UInt32(i)
+//            array[i].value = UInt32.random(in: 0 ..< 2)
             array[i].value = UInt32.random(in: 0 ..< UInt32.max)
         }
         return array
@@ -75,21 +76,21 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
 
         // MARK: Sort_RadixSortGPU
 
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_1k)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_1k)
     }
 
-//    func test_1m() throws {
-//        print("count = \(Self.count_1m)")
-//        print(Self.random_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.random_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
-//        print(Self.sorted_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.sorted_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
-//
-//        // MARK: Sort_Swift
-//
-//        // get duration of Sort_Swift
-//        Test_Sort_Swift(random_array: Self.random_array_1m)
-//
-//        // MARK: Sort_RadixSortCPU
-//
-//        Test_Sort_RadixSortCPU(random_array: Self.random_array_1m)
-//    }
+    func test_1m() throws {
+        print("count = \(Self.count_1m)")
+        print(Self.random_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.random_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
+        print(Self.sorted_array_1m[0 ..< 8].map { ($0.key, $0.value) }, "...", Self.sorted_array_1m[Self.count_1m - 8 ..< Self.count_1m].map { ($0.key, $0.value) })
+
+        // MARK: Sort_Swift
+
+        // get duration of Sort_Swift
+        Test_Sort_Swift(random_array: Self.random_array_1m)
+
+        // MARK: Sort_RadixSortCPU
+
+        Test_Sort_RadixSortCPU(random_array: Self.random_array_1m)
+    }
 }
