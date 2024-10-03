@@ -16,7 +16,7 @@ device ulong * sorted_array [[buffer(1)]]
     threadgroup uint scan_result_of_1[1024];
     
     scan_result_of_0[thread_position_in_threadgroup] = uint(unsorted_array[thread_position_in_threadgroup] & (ulong(1) << radix)) == 0;
-    scan_result_of_1[thread_position_in_threadgroup] = uint(unsorted_array[thread_position_in_threadgroup] & (ulong(1) << radix));
+    scan_result_of_1[thread_position_in_threadgroup] = uint(unsorted_array[thread_position_in_threadgroup] & (ulong(1) << radix)) == (uint(1) << radix);
     
     metal::threadgroup_barrier(metal::mem_flags::mem_none);
     

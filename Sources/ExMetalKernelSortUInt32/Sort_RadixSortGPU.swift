@@ -11,10 +11,10 @@ let metal_library = try! metal_device.makeDefaultLibrary(bundle: Bundle.module)
 let metal_function = metal_library.makeFunction(name: "radix_sort")!
 let metal_compute_pipeline_state = try! metal_device.makeComputePipelineState(function: metal_function)
 
-// TODO: change 1 to 32
 func Sort_RadixSortGPU(unsorted_array: MTLBuffer, sorted_array: MTLBuffer) {
-    for radix in 0 ..< 1 {
-        Sort_RadixSortGPU(unsorted_array: unsorted_array, sorted_array: sorted_array, radix: radix)
+    for i in 0 ..< 16 {
+        Sort_RadixSortGPU(unsorted_array: unsorted_array, sorted_array: sorted_array, radix: 0 + 2 * i)
+        Sort_RadixSortGPU(unsorted_array: sorted_array, sorted_array: unsorted_array, radix: 1 + 2 * i)
     }
 }
 

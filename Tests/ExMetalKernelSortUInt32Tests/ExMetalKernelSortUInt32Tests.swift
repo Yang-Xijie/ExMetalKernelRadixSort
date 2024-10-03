@@ -6,8 +6,9 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         var array = Array<Element>.init(repeating: .init(key: 0, value: 0), count: N)
         for i in 0 ..< N {
             array[i].key = UInt32(i)
-            array[i].value = UInt32.random(in: 0 ..< 2)
-//            array[i].value = UInt32.random(in: 0 ..< UInt32.max)
+//            array[i].value = UInt32.random(in: 0 ..< 2)
+//            array[i].value = UInt32.random(in: 0 ..< 4)
+            array[i].value = UInt32.random(in: 0 ..< UInt32.max)
         }
         return array
     }
@@ -59,8 +60,14 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
             sorted_array[i].key = UInt32(metal_buffer_sorted_array_pointer[i] >> 32)
             sorted_array[i].value = UInt32(metal_buffer_sorted_array_pointer[i] & 0x0000_0000_FFFF_FFFF)
         }
-
         print(sorted_array[0 ..< 8].map { ($0.key, $0.value) }, "...", sorted_array[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
+        
+        var unsorted_array: [Element] = .init(repeating: .init(key: 0, value: 0), count: count)
+        for i in 0 ..< count {
+            unsorted_array[i].key = UInt32(metal_buffer_unsorted_array_pointer[i] >> 32)
+            unsorted_array[i].value = UInt32(metal_buffer_unsorted_array_pointer[i] & 0x0000_0000_FFFF_FFFF)
+        }
+        print(unsorted_array[0 ..< 8].map { ($0.key, $0.value) }, "...", unsorted_array[Self.count_1k - 8 ..< Self.count_1k].map { ($0.key, $0.value) })
     }
 
     func test_1k() throws {
