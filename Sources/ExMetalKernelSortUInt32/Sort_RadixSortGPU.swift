@@ -28,6 +28,8 @@ func Sort_RadixSortGPU(unsorted_array: MTLBuffer, sorted_array: MTLBuffer, radix
 
     metal_command_encoder.setBuffer(unsorted_array, offset: 0, index: 0)
     metal_command_encoder.setBuffer(sorted_array, offset: 0, index: 1)
+    var radix_bytes = radix
+    metal_command_encoder.setBytes(&radix_bytes, length: MemoryLayout<UInt32>.stride, index: 10)
 
     metal_command_encoder.dispatchThreads(
         .init(
