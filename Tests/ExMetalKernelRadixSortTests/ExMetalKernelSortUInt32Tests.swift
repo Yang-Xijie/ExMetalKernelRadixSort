@@ -44,7 +44,7 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
     func Test_Sort_RadixSortGPU(random_array: [Element]) {
         let count = random_array.count
 
-        let metal_buffer_array = metal_device.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
+        let metal_buffer_array = MetalDevice.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
         let metal_buffer_array_pointer = metal_buffer_array.contents().bindMemory(to: UInt64.self, capacity: count)
 
         for i in 0 ..< count {
@@ -63,7 +63,7 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         print(array[0 ..< 8].map { ($0.key, $0.value) }, "...", array[count - 8 ..< count].map { ($0.key, $0.value) })
     }
 
-    func test_fdakj() throws {
+    func test() throws {
         print("----")
         Test_Sort_Swift(random_array: Self.random_array_1k)
         Test_Sort_RadixSortGPU(random_array: Self.random_array_1k)
@@ -84,11 +84,11 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         Test_Sort_RadixSortGPU(random_array: Self.random_array_1m)
         print("----")
 
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_10m)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_10m)
-        print("----")
-
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_10m)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_10m)
+//        print("----")
+//
 //        print("----")
 //        Test_Sort_Swift(random_array: Self.random_array_100m)
 //        Test_Sort_RadixSortGPU(random_array: Self.random_array_100m)

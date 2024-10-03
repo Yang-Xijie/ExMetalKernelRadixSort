@@ -2,22 +2,22 @@ import Accelerate
 import Foundation
 import MetalKit
 
-let metal_device = MTLCreateSystemDefaultDevice()!
-let metal_command_queue = metal_device.makeCommandQueue()!
+let MetalDevice = MTLCreateSystemDefaultDevice()!
+let MetalCommandQueue = MetalDevice.makeCommandQueue()!
 
 // MARK: - create device, library and function
 
 // https://developer.apple.com/forums/thread/649579?answerId=640250022#640250022
-let metal_library = try! metal_device.makeDefaultLibrary(bundle: Bundle.module)
+let MetalLibrary = try! MetalDevice.makeDefaultLibrary(bundle: Bundle.module)
 
-let MetalFunction_scan_initialize = metal_library.makeFunction(name: "radix_sort_scan_initialize")!
-let MetalComputePipelineState_scan_initialize = try! metal_device.makeComputePipelineState(function: MetalFunction_scan_initialize)
-let MetalFunction_scan_reduce = metal_library.makeFunction(name: "radix_sort_scan_reduce")!
-let MetalComputePipelineState_scan_reduce = try! metal_device.makeComputePipelineState(function: MetalFunction_scan_reduce)
-let MetalFunction_scan_downsweep = metal_library.makeFunction(name: "radix_sort_scan_downsweep")!
-let MetalComputePipelineState_scan_downsweep = try! metal_device.makeComputePipelineState(function: MetalFunction_scan_downsweep)
-let MetalFunction_assign = metal_library.makeFunction(name: "radix_sort_assign")!
-let MetalComputePipelineState_assign = try! metal_device.makeComputePipelineState(function: MetalFunction_assign)
+let MetalFunction_scan_initialize = MetalLibrary.makeFunction(name: "radix_sort_scan_initialize")!
+let MetalComputePipelineState_scan_initialize = try! MetalDevice.makeComputePipelineState(function: MetalFunction_scan_initialize)
+let MetalFunction_scan_reduce = MetalLibrary.makeFunction(name: "radix_sort_scan_reduce")!
+let MetalComputePipelineState_scan_reduce = try! MetalDevice.makeComputePipelineState(function: MetalFunction_scan_reduce)
+let MetalFunction_scan_downsweep = MetalLibrary.makeFunction(name: "radix_sort_scan_downsweep")!
+let MetalComputePipelineState_scan_downsweep = try! MetalDevice.makeComputePipelineState(function: MetalFunction_scan_downsweep)
+let MetalFunction_assign = MetalLibrary.makeFunction(name: "radix_sort_assign")!
+let MetalComputePipelineState_assign = try! MetalDevice.makeComputePipelineState(function: MetalFunction_assign)
 
 // MARK: - radix sort for 32 bits
 
@@ -25,17 +25,17 @@ func Sort_RadixSortGPU(array array_A: MTLBuffer, count: Int) {
     // MARK: create buffers (scan_of_0 and scan_of_1)
 
     let array_A_pointer = array_A.contents().bindMemory(to: UInt64.self, capacity: count)
-    let array_B = metal_device.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
+    let array_B = MetalDevice.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
     let array_B_pointer = array_B.contents().bindMemory(to: UInt64.self, capacity: count)
 
     let count_pow_of_2 = Int(pow(2.0, ceil(log2(Float(count)))))
     print("DEBUG count=\(count)")
     print("DEBUG count_pow_of_2=\(count_pow_of_2)")
 
-    let scan_of_0 = metal_device.makeBuffer(length: MemoryLayout<UInt32>.stride * count_pow_of_2)!
+    let scan_of_0 = MetalDevice.makeBuffer(length: MemoryLayout<UInt32>.stride * count_pow_of_2)!
     let scan_of_0_pointer = scan_of_0.contents().bindMemory(to: UInt32.self, capacity: count_pow_of_2)
     memset(scan_of_0_pointer, 0, count_pow_of_2)
-    let scan_of_1 = metal_device.makeBuffer(length: MemoryLayout<UInt32>.stride * count_pow_of_2)!
+    let scan_of_1 = MetalDevice.makeBuffer(length: MemoryLayout<UInt32>.stride * count_pow_of_2)!
     let scan_of_1_pointer = scan_of_1.contents().bindMemory(to: UInt32.self, capacity: count_pow_of_2)
     memset(scan_of_1_pointer, 0, count_pow_of_2)
 
@@ -57,7 +57,7 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 {
     // MARK: initialize scan_of_0 and scan_of_1
 
-    let MetalCommandBuffer_scan_initialize = metal_command_queue.makeCommandBuffer()!
+    let MetalCommandBuffer_scan_initialize = MetalCommandQueue.makeCommandBuffer()!
 
     let MetalCommandEncoder_scan_initialize = MetalCommandBuffer_scan_initialize.makeComputeCommandEncoder()!
     MetalCommandEncoder_scan_initialize.setComputePipelineState(MetalComputePipelineState_scan_initialize)
@@ -91,7 +91,7 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     // MARK: scan_reduce
 
-    let MetalCommandBuffer_scan_reduce = metal_command_queue.makeCommandBuffer()!
+    let MetalCommandBuffer_scan_reduce = MetalCommandQueue.makeCommandBuffer()!
 
     let MetalCommandEncoder_scan_reduce = MetalCommandBuffer_scan_reduce.makeComputeCommandEncoder()!
     MetalCommandEncoder_scan_reduce.setComputePipelineState(MetalComputePipelineState_scan_reduce)
@@ -133,7 +133,7 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     // MARK: scan_downsweep
 
-    let MetalCommandBuffer_scan_downsweep = metal_command_queue.makeCommandBuffer()!
+    let MetalCommandBuffer_scan_downsweep = MetalCommandQueue.makeCommandBuffer()!
 
     let MetalCommandEncoder_scan_downsweep = MetalCommandBuffer_scan_downsweep.makeComputeCommandEncoder()!
     MetalCommandEncoder_scan_downsweep.setComputePipelineState(MetalComputePipelineState_scan_downsweep)
@@ -174,7 +174,7 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     // MARK: assign sorted results
 
-    let MetalCommandBuffer_assign = metal_command_queue.makeCommandBuffer()!
+    let MetalCommandBuffer_assign = MetalCommandQueue.makeCommandBuffer()!
 
     let MetalCommandEncoder_assign = MetalCommandBuffer_assign.makeComputeCommandEncoder()!
     MetalCommandEncoder_assign.setComputePipelineState(MetalComputePipelineState_assign)

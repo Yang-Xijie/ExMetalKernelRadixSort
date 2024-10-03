@@ -19,7 +19,7 @@ let package = Package(
         .target(
             name: "ExMetalKernelRadixSort",
             resources: [
-                .process("radix-sort-scan-initilize.metal"),
+                .process("radix-sort-scan-initialize.metal"),
                 .process("radix-sort-scan-reduce.metal"),
                 .process("radix-sort-scan-downsweep.metal"),
                 .process("radix-sort-assign.metal"),
