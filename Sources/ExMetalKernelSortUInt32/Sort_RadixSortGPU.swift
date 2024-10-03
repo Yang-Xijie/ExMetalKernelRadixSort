@@ -114,14 +114,12 @@ func Sort_RadixSortGPU_1024x1024_2bit(array_A: MTLBuffer, array_B: MTLBuffer, co
     let metal_command_encoder_scan_reduce = metal_command_buffer_scan_reduce.makeComputeCommandEncoder()!
     metal_command_encoder_scan_reduce.setComputePipelineState(metal_compute_pipeline_state_radix_sort_2bit)
 
-    metal_command_encoder_scan_reduce.setBuffer(array_A, offset: 0, index: 0)
-    metal_command_encoder_scan_reduce.setBuffer(array_B, offset: 0, index: 1)
-    metal_command_encoder_scan_reduce.setBuffer(scan_of_0, offset: 0, index: 2)
-    metal_command_encoder_scan_reduce.setBuffer(scan_of_1, offset: 0, index: 3)
+    metal_command_encoder_scan_reduce.setBuffer(scan_of_0, offset: 0, index: 0)
+    metal_command_encoder_scan_reduce.setBuffer(scan_of_1, offset: 0, index: 1)
 
     var divider = 2
-    var threads = count_pow_of_2 / divider
-    while threads == 1 {
+    var threads = count_pow_of_2 / 2
+    while threads != 1 {
         metal_command_encoder_scan_reduce.setBytes(&divider, length: MemoryLayout<UInt32>.stride, index: 10)
         metal_command_encoder_scan_reduce.dispatchThreads(
             .init(
@@ -132,7 +130,7 @@ func Sort_RadixSortGPU_1024x1024_2bit(array_A: MTLBuffer, array_B: MTLBuffer, co
                 width: 1024,
                 height: 1,
                 depth: 1))
-        
+
         divider *= 2
         threads /= 2
     }
@@ -148,7 +146,12 @@ func Sort_RadixSortGPU_1024x1024_2bit(array_A: MTLBuffer, array_B: MTLBuffer, co
 
     // MARK: set last element to zero
 
+    scan_of_0_pointer[count_pow_of_2 - 1] = 0
+    scan_of_1_pointer[count_pow_of_2 - 1] = 0
+
     // MARK: scan_downsweep
+    
+    
 
     // MARK: get count_of_0
 
