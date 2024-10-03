@@ -1,7 +1,6 @@
 #include <metal_stdlib>
 using namespace metal;
 
-/// any threads
 kernel void scan_initialize(
 uint thread_position_in_grid [[thread_position_in_grid]],
 device ulong * array [[buffer(0)]],
