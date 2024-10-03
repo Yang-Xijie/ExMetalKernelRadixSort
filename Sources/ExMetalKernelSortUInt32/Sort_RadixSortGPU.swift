@@ -12,21 +12,22 @@ let metal_function = metal_library.makeFunction(name: "radix_sort")!
 let metal_compute_pipeline_state = try! metal_device.makeComputePipelineState(function: metal_function)
 
 // TODO: change 1 to 32
-func Sort_RadixSortGPU(array: MTLBuffer) {
+func Sort_RadixSortGPU(unsorted_array: MTLBuffer, sorted_array: MTLBuffer) {
     for radix in 0 ..< 1 {
-        Sort_RadixSortGPU(array: array, radix: radix)
+        Sort_RadixSortGPU(unsorted_array: unsorted_array, sorted_array: sorted_array, radix: radix)
     }
 }
 
 // TODO: change 1024 to variable
 /// `radix`: [0,31]
-func Sort_RadixSortGPU(array: MTLBuffer, radix: Int) {
+func Sort_RadixSortGPU(unsorted_array: MTLBuffer, sorted_array: MTLBuffer, radix: Int) {
     let metal_command_buffer = metal_command_queue.makeCommandBuffer()!
 
     let metal_command_encoder = metal_command_buffer.makeComputeCommandEncoder()!
     metal_command_encoder.setComputePipelineState(metal_compute_pipeline_state)
 
-    metal_command_encoder.setBuffer(array, offset: 0, index: 0)
+    metal_command_encoder.setBuffer(unsorted_array, offset: 0, index: 0)
+    metal_command_encoder.setBuffer(sorted_array, offset: 0, index: 1)
 
     metal_command_encoder.dispatchThreads(
         .init(
