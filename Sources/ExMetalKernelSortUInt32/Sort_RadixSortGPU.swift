@@ -1,3 +1,4 @@
+import Accelerate
 import Foundation
 import MetalKit
 
@@ -20,14 +21,16 @@ let MetalComputePipelineState_assign = try! metal_device.makeComputePipelineStat
 
 // MARK: - radix sort for 32 bits
 
-func Sort_RadixSortGPU_1024x1024(array array_A: MTLBuffer, count: Int) {
+func Sort_RadixSortGPU(array array_A: MTLBuffer, count: Int) {
     // MARK: create buffers (scan_of_0 and scan_of_1)
 
     let array_A_pointer = array_A.contents().bindMemory(to: UInt64.self, capacity: count)
     let array_B = metal_device.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
     let array_B_pointer = array_B.contents().bindMemory(to: UInt64.self, capacity: count)
 
-    let count_pow_of_2 = count / 2 * 2
+    let count_pow_of_2 = Int(pow(2.0, ceil(log2(Float(count)))))
+    print("DEBUG count=\(count)")
+    print("DEBUG count_pow_of_2=\(count_pow_of_2)")
 
     let scan_of_0 = metal_device.makeBuffer(length: MemoryLayout<UInt32>.stride * count_pow_of_2)!
     let scan_of_0_pointer = scan_of_0.contents().bindMemory(to: UInt32.self, capacity: count_pow_of_2)
@@ -37,20 +40,20 @@ func Sort_RadixSortGPU_1024x1024(array array_A: MTLBuffer, count: Int) {
     memset(scan_of_1_pointer, 0, count_pow_of_2)
 
     for i in 0 ..< 16 {
-        Sort_RadixSortGPU_1024x1024_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
-                                         scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
-                                         radix: i * 2 + 0)
-        Sort_RadixSortGPU_1024x1024_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
-                                         scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
-                                         radix: i * 2 + 1)
+        Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                               scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                               radix: i * 2 + 0)
+        Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                               scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                               radix: i * 2 + 1)
     }
 }
 
 // MARK: - radix sort for 1 bit
 
-func Sort_RadixSortGPU_1024x1024_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePointer<UInt64>, array_B: MTLBuffer, array_B_pointer: UnsafeMutablePointer<UInt64>, count: Int,
-                                      scan_of_0: MTLBuffer, scan_of_0_pointer: UnsafeMutablePointer<UInt32>, scan_of_1: MTLBuffer, scan_of_1_pointer: UnsafeMutablePointer<UInt32>, count_pow_of_2: Int,
-                                      radix: Int)
+func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePointer<UInt64>, array_B: MTLBuffer, array_B_pointer: UnsafeMutablePointer<UInt64>, count: Int,
+                            scan_of_0: MTLBuffer, scan_of_0_pointer: UnsafeMutablePointer<UInt32>, scan_of_1: MTLBuffer, scan_of_1_pointer: UnsafeMutablePointer<UInt32>, count_pow_of_2: Int,
+                            radix: Int)
 {
     // MARK: initialize scan_of_0 and scan_of_1
 
