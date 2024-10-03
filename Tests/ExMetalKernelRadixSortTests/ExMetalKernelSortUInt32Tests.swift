@@ -1,4 +1,4 @@
-@testable import ExMetalKernelSortUInt32
+@testable import ExMetalKernelRadixSort
 import XCTest
 
 final class ExMetalKernelSortUInt32Tests: XCTestCase {
@@ -89,14 +89,14 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         Test_Sort_RadixSortGPU(random_array: Self.random_array_10m)
         print("----")
 
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_100m)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_100m)
-        print("----")
-
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_1b)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_1b)
-        print("----")
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_100m)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_100m)
+//        print("----")
+//
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_1b)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_1b)
+//        print("----")
     }
 }

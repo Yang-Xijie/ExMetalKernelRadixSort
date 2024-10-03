@@ -3,29 +3,32 @@
 import PackageDescription
 
 let package = Package(
-    name: "ExMetalKernelSortUInt32",
+    name: "ExMetalKernelRadixSort",
     platforms: [
         .macOS(.v14),
     ],
     products: [
         .library(
-            name: "ExMetalKernelSortUInt32",
+            name: "ExMetalKernelRadixSort",
             targets: [
-                "ExMetalKernelSortUInt32",
+                "ExMetalKernelRadixSort",
             ]
         ),
     ],
     targets: [
         .target(
-            name: "ExMetalKernelSortUInt32",
+            name: "ExMetalKernelRadixSort",
             resources: [
-                .process("radix-sort.metal"),
+                .process("radix-sort-scan-initilize.metal"),
+                .process("radix-sort-scan-reduce.metal"),
+                .process("radix-sort-scan-downsweep.metal"),
+                .process("radix-sort-assign.metal"),
             ]
         ),
         .testTarget(
-            name: "ExMetalKernelSortUInt32Tests",
+            name: "ExMetalKernelRadixSortTests",
             dependencies: [
-                "ExMetalKernelSortUInt32",
+                "ExMetalKernelRadixSort",
             ]
         ),
     ]
