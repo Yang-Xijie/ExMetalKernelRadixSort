@@ -2,7 +2,7 @@
 using namespace metal;
 
 /// threads should be pow of 2
-kernel void scan_reduce(
+kernel void radix_sort_scan_reduce(
 uint thread_position_in_grid [[thread_position_in_grid]],
 device uint * scan_of_0 [[buffer(0)]],
 device uint * scan_of_1 [[buffer(1)]],

@@ -6,9 +6,9 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         var array = Array<Element>.init(repeating: .init(key: 0, value: 0), count: N)
         for i in 0 ..< N {
             array[i].key = UInt32(i)
-            array[i].value = UInt32.random(in: 0 ..< 2)
+//            array[i].value = UInt32.random(in: 0 ..< 2)
 //            array[i].value = UInt32.random(in: 0 ..< 4)
-//            array[i].value = UInt32.random(in: 0 ..< UInt32.max)
+            array[i].value = UInt32.random(in: 0 ..< UInt32.max)
         }
         return array
     }
@@ -80,7 +80,6 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
     func Test_Sort_RadixSortGPU_1024x1024(random_array: [Element]) {
         let count = random_array.count
         assert(count == 1024 * 1024)
-        print("staticThreadgroupMemoryLength =", metal_compute_pipeline_state_radix_sort_2bit.staticThreadgroupMemoryLength)
 
         let metal_buffer_array = metal_device.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
         let metal_buffer_array_pointer = metal_buffer_array.contents().bindMemory(to: UInt64.self, capacity: count)

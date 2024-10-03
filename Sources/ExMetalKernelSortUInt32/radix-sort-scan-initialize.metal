@@ -1,7 +1,7 @@
 #include <metal_stdlib>
 using namespace metal;
 
-kernel void scan_initialize(
+kernel void radix_sort_scan_initialize(
 uint thread_position_in_grid [[thread_position_in_grid]],
 device ulong * array [[buffer(0)]],
 device uint * scan_of_0 [[buffer(1)]],

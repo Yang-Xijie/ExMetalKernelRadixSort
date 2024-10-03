@@ -1,7 +1,7 @@
 #include <metal_stdlib>
 using namespace metal;
 
-kernel void sort_assign(
+kernel void radix_sort_assign(
 uint thread_position_in_grid [[thread_position_in_grid]],
 device ulong * array_A [[buffer(0)]],
 device ulong * array_B [[buffer(1)]],
