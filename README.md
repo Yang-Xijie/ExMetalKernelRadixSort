@@ -22,6 +22,13 @@ Metal kernel implementation for simple radix sort.
     - GPU: Total Number of Cores:    16
 - input: random arrays
 
+### Release Mode
+
+| Count             | 1k | 10k | 100k | 1m | 10m | 100m | 1b |
+| - | - | - | - | - | - | - | - |
+| Swift        (ms) | 0.055ms | 0.577ms | 6.941ms | 79.694ms | 939.836ms | 10879.160ms | ... |
+| RadixSortGPU (ms) | 23.979ms | 24.656ms | 36.709ms | 71.121ms | 659.600ms | 5349.858ms | ... |
+
 ### Debug Mode
 
 | Count             | 1k | 10k | 100k | 1m | 10m | 100m | 1b |
@@ -30,10 +37,6 @@ Metal kernel implementation for simple radix sort.
 | RadixSortGPU (ms) | 34.665 | 29.672 | 34.603 | 52.342 | 656.553 | 5370.615 | 0️⃣ |
 
 - 0️⃣: Execution of the command buffer was aborted due to an error during execution. Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory) 78622.588ms no result...
-
-### Release Mode
-
-**WIP**
 
 ## References
 

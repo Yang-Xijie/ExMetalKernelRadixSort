@@ -2,7 +2,7 @@ import Accelerate
 import Foundation
 import MetalKit
 
-let MetalDevice = MTLCreateSystemDefaultDevice()!
+public let MetalDevice = MTLCreateSystemDefaultDevice()!
 let MetalCommandQueue = MetalDevice.makeCommandQueue()!
 
 // MARK: - create device, library and function
@@ -21,7 +21,7 @@ let MetalComputePipelineState_assign = try! MetalDevice.makeComputePipelineState
 
 // MARK: - radix sort for 32 bits
 
-func Sort_RadixSortGPU(array array_A: MTLBuffer, count: Int) {
+public func Sort_RadixSortGPU(array array_A: MTLBuffer, count: Int) {
     // MARK: create buffers (scan_of_0 and scan_of_1)
 
     let array_A_pointer = array_A.contents().bindMemory(to: UInt64.self, capacity: count)
