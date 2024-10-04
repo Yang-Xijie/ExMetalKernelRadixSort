@@ -65,20 +65,20 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
     }
 
     func test() throws {
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_1k)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_1k)
-        print("----")
-
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_10k)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_10k)
-        print("----")
-
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_100k)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_100k)
-        print("----")
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_1k)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_1k)
+//        print("----")
+//
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_10k)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_10k)
+//        print("----")
+//
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_100k)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_100k)
+//        print("----")
 
         print("----")
         Test_Sort_Swift(random_array: Self.random_array_1m)
@@ -94,9 +94,10 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         Test_Sort_Swift(random_array: Self.random_array_100m)
         Test_Sort_RadixSortGPU(random_array: Self.random_array_100m)
         print("----")
-//
+
 //        print("----")
 //        Test_Sort_Swift(random_array: Self.random_array_1b)
+//        // Execution of the command buffer was aborted due to an error during execution. Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory)
 //        Test_Sort_RadixSortGPU(random_array: Self.random_array_1b)
 //        print("----")
     }

@@ -26,8 +26,8 @@ Metal kernel implementation for simple radix sort.
 
 | Count             | 1k | 10k | 100k | 1m | 10m | 100m | 1b |
 | - | - | - | - | - | - | - | - |
-| Swift        (ms) | 0.055ms | 0.577ms | 6.941ms | 79.694ms | 939.836ms | 10879.160ms | ... |
-| RadixSortGPU (ms) | 23.979ms | 24.656ms | 36.709ms | 71.121ms | 659.600ms | 5349.858ms | ... |
+| Swift        (ms) | 0.055ms | 0.577ms | 6.941ms | 79.694ms | 939.836ms | 10879.160ms | 130040.261ms |
+| RadixSortGPU (ms) | 23.979ms | 24.656ms | 36.709ms | 71.121ms | 659.600ms | 5349.858ms | 0️⃣ |
 
 ### Debug Mode
 
