@@ -3,8 +3,8 @@ import ExMetalKernelRadixSort
 import XCTest
 
 final class ExMetalKernelSortUInt32Tests: XCTestCase {
-    static func CreateTestArray(N: Int) -> [Element] {
-        var array = Array<Element>.init(repeating: .init(key: 0, value: 0), count: N)
+    static func CreateTestArray(N: Int) -> [ElementOfUInt32KeyAndUInt32Value] {
+        var array = Array<ElementOfUInt32KeyAndUInt32Value>.init(repeating: .init(key: 0, value: 0), count: N)
         for i in 0 ..< N {
             array[i].key = UInt32(i)
 //            array[i].value = UInt32.random(in: 0 ..< 2)
@@ -30,7 +30,7 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
     static let random_array_100m = CreateTestArray(N: count_100m)
     static let random_array_1b = CreateTestArray(N: count_1b)
 
-    func Test_Sort_Swift(random_array: [Element]) {
+    func Test_Sort_Swift(random_array: [ElementOfUInt32KeyAndUInt32Value]) {
         let count = random_array.count
 
         var array = random_array
@@ -42,10 +42,11 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         print(array[0 ..< 8].map { ($0.key, $0.value) }, "...", array[count - 8 ..< count].map { ($0.key, $0.value) })
     }
 
-    func Test_Sort_RadixSortGPU(random_array: [Element]) {
+    func Test_Sort_RadixSortGPU(random_array: [ElementOfUInt32KeyAndUInt32Value]) {
         let count = random_array.count
 
-        let metal_buffer_array = MetalDevice.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
+        let metal_device = MTLCreateSystemDefaultDevice()!
+        let metal_buffer_array = metal_device.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
         let metal_buffer_array_pointer = metal_buffer_array.contents().bindMemory(to: UInt64.self, capacity: count)
 
         for i in 0 ..< count {
@@ -56,7 +57,7 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         Sort_RadixSortGPU(array: metal_buffer_array, count: count)
         print("Sort_RadixSortGPU() \(String(format: "%.3f", Date.now.timeIntervalSince(time) * 1000))ms")
 
-        var array: [Element] = .init(repeating: .init(key: 0, value: 0), count: count)
+        var array: [ElementOfUInt32KeyAndUInt32Value] = .init(repeating: .init(key: 0, value: 0), count: count)
         for i in 0 ..< count {
             array[i].key = UInt32(metal_buffer_array_pointer[i] >> 32)
             array[i].value = UInt32(metal_buffer_array_pointer[i] & 0x0000_0000_FFFF_FFFF)
@@ -90,11 +91,11 @@ final class ExMetalKernelSortUInt32Tests: XCTestCase {
         Test_Sort_RadixSortGPU(random_array: Self.random_array_10m)
         print("----")
 
-        print("----")
-        Test_Sort_Swift(random_array: Self.random_array_100m)
-        Test_Sort_RadixSortGPU(random_array: Self.random_array_100m)
-        print("----")
-
+//        print("----")
+//        Test_Sort_Swift(random_array: Self.random_array_100m)
+//        Test_Sort_RadixSortGPU(random_array: Self.random_array_100m)
+//        print("----")
+//
 //        print("----")
 //        Test_Sort_Swift(random_array: Self.random_array_1b)
 //        // Execution of the command buffer was aborted due to an error during execution. Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory)

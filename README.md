@@ -26,14 +26,14 @@ Metal kernel implementation for simple radix sort.
 
 | Count             | 1k | 10k | 100k | 1m | 10m | 100m | 1b |
 | - | - | - | - | - | - | - | - |
-| Swift        (ms) | 0.055ms | 0.577ms | 6.941ms | 79.694ms | 939.836ms | 10879.160ms | 130040.261ms |
-| RadixSortGPU (ms) | 23.979ms | 24.656ms | 36.709ms | 71.121ms | 659.600ms | 5349.858ms | 0️⃣ |
+| Swift        (ms) | 0.055 | 0.577 | 6.941 | 79.694 | 939.836 | 10879.160 | 130040.261 |
+| RadixSortGPU (ms) | 23.979 | 24.656 | 36.709 | 71.121 | 659.600 | 5349.858 | 0️⃣ |
 
 ### Debug Mode
 
 | Count             | 1k | 10k | 100k | 1m | 10m | 100m | 1b |
 | - | - | - | - | - | - | - | - |
-| Swift        (ms) | 0.811 | 34.665 | 132.458 | 975.939 | 11940.425 | 150437.893 | 1161282.611ms |
+| Swift        (ms) | 0.811 | 34.665 | 132.458 | 975.939 | 11940.425 | 150437.893 | 1161282.611 |
 | RadixSortGPU (ms) | 34.665 | 29.672 | 34.603 | 52.342 | 656.553 | 5370.615 | 0️⃣ |
 
 - 0️⃣: Execution of the command buffer was aborted due to an error during execution. Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory) 78622.588ms no result...

@@ -2,7 +2,7 @@ import Accelerate
 import Foundation
 import MetalKit
 
-public let MetalDevice = MTLCreateSystemDefaultDevice()!
+let MetalDevice = MTLCreateSystemDefaultDevice()!
 let MetalCommandQueue = MetalDevice.makeCommandQueue()!
 
 // MARK: - create device, library and function
@@ -21,8 +21,11 @@ let MetalComputePipelineState_assign = try! MetalDevice.makeComputePipelineState
 
 // MARK: - radix sort for 32 bits
 
+/// Sort a MTLBuffer with UInt64 in (higher 32 bits key, lower 32 bits value, sort by values)
 public func Sort_RadixSortGPU(array array_A: MTLBuffer, count: Int) {
     // MARK: create buffers (scan_of_0 and scan_of_1)
+
+    let time = Date.now
 
     let array_A_pointer = array_A.contents().bindMemory(to: UInt64.self, capacity: count)
     let array_B = MetalDevice.makeBuffer(length: MemoryLayout<UInt64>.stride * count)!
@@ -39,14 +42,106 @@ public func Sort_RadixSortGPU(array array_A: MTLBuffer, count: Int) {
     let scan_of_1_pointer = scan_of_1.contents().bindMemory(to: UInt32.self, capacity: count_pow_of_2)
     memset(scan_of_1_pointer, 0, count_pow_of_2)
 
-    for i in 0 ..< 16 {
-        Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
-                               scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
-                               radix: i * 2 + 0)
-        Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
-                               scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
-                               radix: i * 2 + 1)
-    }
+    print("cpu memory: \(String(format: "%.3f", Date.now.timeIntervalSince(time) * 1000))ms")
+
+    // MARK: sort each bit
+
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 0)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 1)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 2)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 3)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 4)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 5)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 6)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 7)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 8)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 9)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 10)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 11)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 12)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 13)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 14)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 15)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 16)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 17)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 18)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 19)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 20)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 21)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 22)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 23)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 24)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 25)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 26)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 27)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 28)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 29)
+    Sort_RadixSortGPU_1bit(array_A: array_A, array_A_pointer: array_A_pointer, array_B: array_B, array_B_pointer: array_B_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 30)
+    Sort_RadixSortGPU_1bit(array_A: array_B, array_A_pointer: array_B_pointer, array_B: array_A, array_B_pointer: array_A_pointer, count: count,
+                           scan_of_0: scan_of_0, scan_of_0_pointer: scan_of_0_pointer, scan_of_1: scan_of_1, scan_of_1_pointer: scan_of_1_pointer, count_pow_of_2: count_pow_of_2,
+                           radix: 31)
 }
 
 // MARK: - radix sort for 1 bit
@@ -55,6 +150,8 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
                             scan_of_0: MTLBuffer, scan_of_0_pointer: UnsafeMutablePointer<UInt32>, scan_of_1: MTLBuffer, scan_of_1_pointer: UnsafeMutablePointer<UInt32>, count_pow_of_2: Int,
                             radix: Int)
 {
+    print("radix=\(radix)")
+
     // MARK: initialize scan_of_0 and scan_of_1
 
     let MetalCommandBuffer_scan_initialize = MetalCommandQueue.makeCommandBuffer()!
@@ -82,8 +179,8 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     MetalCommandEncoder_scan_initialize.endEncoding()
 
-    MetalCommandBuffer_scan_initialize.addCompletedHandler { _ in
-//        print("gpu time: \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
+    MetalCommandBuffer_scan_initialize.addCompletedHandler { command_buffer in
+        print("gpu time (scan_initialize): \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
     }
 
     MetalCommandBuffer_scan_initialize.commit()
@@ -119,8 +216,8 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     MetalCommandEncoder_scan_reduce.endEncoding()
 
-    MetalCommandBuffer_scan_reduce.addCompletedHandler { _ in
-//        print("gpu time: \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
+    MetalCommandBuffer_scan_reduce.addCompletedHandler { command_buffer in
+        print("gpu time (scan_reduce): \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
     }
 
     MetalCommandBuffer_scan_reduce.commit()
@@ -161,8 +258,8 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     MetalCommandEncoder_scan_downsweep.endEncoding()
 
-    MetalCommandBuffer_scan_downsweep.addCompletedHandler { _ in
-//        print("gpu time: \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
+    MetalCommandBuffer_scan_downsweep.addCompletedHandler { command_buffer in
+        print("gpu time (scan_downsweep): \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
     }
 
     MetalCommandBuffer_scan_downsweep.commit()
@@ -199,8 +296,8 @@ func Sort_RadixSortGPU_1bit(array_A: MTLBuffer, array_A_pointer: UnsafeMutablePo
 
     MetalCommandEncoder_assign.endEncoding()
 
-    MetalCommandBuffer_assign.addCompletedHandler { _ in
-//        print("gpu time: \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
+    MetalCommandBuffer_assign.addCompletedHandler { command_buffer in
+        print("gpu time (assign): \(String(format: "%.3f", (command_buffer.gpuEndTime - command_buffer.gpuStartTime) * 1000))ms")
     }
 
     MetalCommandBuffer_assign.commit()

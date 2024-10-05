@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Element {
+public struct ElementOfUInt32KeyAndUInt32Value {
     public var key: UInt32
     public var value: UInt32
 
